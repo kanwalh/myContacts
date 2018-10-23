@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Groups>
+  <Group Name="Google" Description="Manage Google contacts" Visibile="true">
+    <add Name="Google" Visibile="true"/>
+  </Group>
+  <Group Name="Windows Live" Description="Manage Windows Live contacts" Visibile="true">
+    <add Name="Windows Live" Visibile="true"/>
+  </Group>
+  <Group Name="System" Description="myContacts API" Visibile="true">
+    <add Name="Values" Visibile="true"/>
+  </Group>
+</Groups>
