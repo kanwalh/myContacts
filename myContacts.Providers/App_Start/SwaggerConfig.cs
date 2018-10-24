@@ -1,14 +1,12 @@
-using System.Web.Http;
-using WebActivatorEx;
 using myContacts.Providers;
 using Swashbuckle.Application;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.Routing.Constraints;
-using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using System.Xml;
+using WebActivatorEx;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -16,12 +14,14 @@ namespace myContacts.Providers
 {
     public class SwaggerConfig
     {
+        static List<Group> groups = new List<Group>();
+
         /// <summary>
         /// 
         /// </summary>
         public static void Register()
         {
-            var thisAssembly = typeof(SwaggerConfig).Assembly;
+            System.Reflection.Assembly thisAssembly = typeof(SwaggerConfig).Assembly;
 
             GlobalConfiguration.Configuration
                 .EnableSwagger(c =>
@@ -58,8 +58,11 @@ namespace myContacts.Providers
                             (apiDesc, targetApiVersion) => ResolveVersionByUrlControllerMatching(apiDesc, targetApiVersion),
                             (vc) =>
                             {
-                                ReadSwaggerSchemaInformation().ForEach(x => {
-                                    vc.Version(x.Name, x.Description);
+                                ReadSwaggerSchemaInformation().ForEach(x =>
+                                {
+                                    vc.Version(
+                                        string.IsNullOrEmpty(x.DisplayName)?x.Name:x.DisplayName, 
+                                        x.Description);
                                 });
                                 //vc.Version("v1", "All Other Controllers");
                                 //vc.Version("google", "Google Contacts");
@@ -269,19 +272,48 @@ namespace myContacts.Providers
 
         public static List<Group> ReadSwaggerSchemaInformation()
         {
-            List<Group> groups = new List<Group>();
+            XmlDocument xDoc = new XmlDocument();
 
-            var xDoc = new XmlDocument();
+            string swaggerConfigXml = System.Web.Hosting.HostingEnvironment.MapPath("/App_Data/SwaggerSchema.xml");
+            // Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, @"App_Data\SwaggerSchema.xml");
 
-            xDoc.Load("SwaggerSchema.xml");
+            xDoc.Load(swaggerConfigXml);
 
-            var root = xDoc.DocumentElement;
+            XmlElement root = xDoc.DocumentElement;
 
+            // OUTER LOOP TO ITERATE OVER ALL GROUPS
             foreach (XmlNode node in root.SelectNodes("Group"))
             {
-                groups.Add(new Group() { Name = node.Name, Description = "Sample" });
-            }
+                bool.TryParse((node.Attributes["IsVisible"] == null ? "false" : node.Attributes["IsVisible"].Value), out bool isGroupVisible);
 
+                if (isGroupVisible)
+                {
+                    Group group = new Group()
+                    {
+                        Name = (node.Attributes["Name"] == null ? "Name attribute not found" : node.Attributes["Name"].Value),
+                        DisplayName = (node.Attributes["DisplayName"] == null ? string.Empty : node.Attributes["DisplayName"].Value),
+                        Description = (node.Attributes["Description"] == null ? "Description attribute not found" : node.Attributes["Name"].Value),
+                        IsVisible = isGroupVisible
+                    };
+
+                    // INNER LOOP TO ITERATE OVER ALL ITEMS IN A PARTICULAR GROUP
+                    foreach (XmlNode childNode in node.ChildNodes)
+                    {
+                        bool.TryParse((childNode.Attributes["IsVisible"] == null ? "false" : childNode.Attributes["IsVisible"].Value), out bool isItemVisible);
+
+                        if (isItemVisible)
+                        {
+                            group.Items.Add(new GroupItem()
+                            {
+                                Name = (childNode.Attributes["Name"] == null ? "Name attribute not found" : childNode.Attributes["Name"].Value),
+                                IsVisible = isItemVisible
+                            });
+                        }
+                    }
+
+                    groups.Add(group);
+                }
+            }
             return groups;
         }
 
@@ -291,11 +323,11 @@ namespace myContacts.Providers
         /// <param name="apiDesc"></param>
         /// <param name="targetApiVersion"></param>
         /// <returns></returns>
-        public static bool ResolveVersionSupportByRouteConstraint(ApiDescription apiDesc, string targetApiVersion)
+        private static bool ResolveVersionSupportByRouteConstraint(ApiDescription apiDesc, string targetApiVersion)
         {
-            var versionConstraint = (apiDesc.Route.Constraints.ContainsKey("apiVersion"))
-                ? apiDesc.Route.Constraints["apiVersion"] as RegexRouteConstraint
-                : null;
+            RegexRouteConstraint versionConstraint = (apiDesc.Route.Constraints.ContainsKey("apiVersion"))
+                    ? apiDesc.Route.Constraints["apiVersion"] as RegexRouteConstraint
+                    : null;
 
             return (versionConstraint == null)
                 ? false
@@ -308,21 +340,47 @@ namespace myContacts.Providers
         /// <param name="apiDesc"></param>
         /// <param name="targetApiVersion"></param>
         /// <returns></returns>
-        public static bool ResolveVersionByUrlControllerMatching(ApiDescription apiDesc, string targetApiVersion)
+        private static bool ResolveVersionByUrlControllerMatching(ApiDescription apiDesc, string targetApiVersion)
         {
-            var versionConstraint = (apiDesc.RelativePath.ToUpper().Contains(targetApiVersion.ToUpper()))
-                ? apiDesc.RelativePath
-                : null;
+            var matchApiVersion = groups.Single(grp => grp.DisplayName == targetApiVersion).Name;
 
-            return (versionConstraint == null)
-                ? false
-                : true;
+            var matchController = groups.Single(grp => grp.Name == matchApiVersion)
+                .Items.Where(x => x.Name.Contains(apiDesc.ActionDescriptor.ControllerDescriptor.ControllerName));
+
+            return (matchController != null? matchController.Count() > 0 : false);
+
+            //string versionConstraint = (apiDesc.RelativePath.ToUpper().Contains(targetApiVersion.ToUpper()))
+            //        ? apiDesc.RelativePath
+            //        : null;
+
+            //return (versionConstraint == null)
+            //    ? false
+            //    : true;
         }
     }
 
     public class Group
     {
+        public Group()
+        {
+            Items = new List<GroupItem>();
+        }
+
         public string Name { get; set; }
+
+        public string DisplayName { get; set; }
+
         public string Description { get; set; }
+
+        public bool IsVisible { get; set; }
+
+        public List<GroupItem> Items { get; set; }
+    }
+
+    public class GroupItem
+    {
+        public string Name { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }
