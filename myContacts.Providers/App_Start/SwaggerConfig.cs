@@ -61,7 +61,7 @@ namespace myContacts.Providers
                                 ReadSwaggerSchemaInformation().ForEach(x =>
                                 {
                                     vc.Version(
-                                        string.IsNullOrEmpty(x.DisplayName)?x.Name:x.DisplayName, 
+                                        string.IsNullOrEmpty(x.DisplayName) ? x.Name : x.DisplayName,
                                         x.Description);
                                 });
                                 //vc.Version("v1", "All Other Controllers");
@@ -104,7 +104,7 @@ namespace myContacts.Providers
                         // By default, this will be controller name but you can use the "GroupActionsBy" option to
                         // override with any value.
                         //
-                        c.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
+                        // c.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
 
                         // You can also specify a custom sort order for groups (as defined by "GroupActionsBy") to dictate
                         // the order in which operations are listed. For example, if the default grouping is in place
@@ -112,14 +112,14 @@ namespace myContacts.Providers
                         // ProductsController will be listed before those from a CustomersController. This is typically
                         // used to customize the order of groupings in the swagger-ui.
                         //
-                        //c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
+                        // c.OrderActionGroupsBy(new DescendingAlphabeticComparer());
 
                         // If you annotate Controllers and API Types with
                         // Xml comments (http://msdn.microsoft.com/en-us/library/b2s063f7(v=vs.110).aspx), you can incorporate
                         // those comments into the generated docs and UI. You can enable this by providing the path to one or
                         // more Xml comment files.
                         //
-                        // c.IncludeXmlComments(GetXmlCommentsPath());
+                        //c.IncludeXmlComments(GetXmlCommentsPath());
 
                         // Swashbuckle makes a best attempt at generating Swagger compliant JSON schemas for the various types
                         // exposed in your API. However, there may be occasions when more control of the output is needed.
@@ -200,7 +200,7 @@ namespace myContacts.Providers
                         // Use the "DocumentTitle" option to change the Document title.
                         // Very helpful when you have multiple Swagger pages open, to tell them apart.
                         //
-                        //c.DocumentTitle("My Swagger UI");
+                        c.DocumentTitle("myContacts App - Supported Providers");
 
                         // Use the "InjectStylesheet" option to enrich the UI with one or more additional CSS stylesheets.
                         // The file must be included in your project as an "Embedded Resource", and then the resource's
