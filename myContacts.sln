@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myContacts.Providers.UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myContacts.Providers", "myContacts.Providers\myContacts.Providers.csproj", "{793294CB-CF69-4CBF-A791-7E8A7CBA749B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myContact.WebUI", "myContact.WebUI\myContact.WebUI.csproj", "{06F2BEC1-C662-43E3-AE65-BC6FA0E3BEEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{793294CB-CF69-4CBF-A791-7E8A7CBA749B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{793294CB-CF69-4CBF-A791-7E8A7CBA749B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{793294CB-CF69-4CBF-A791-7E8A7CBA749B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F2BEC1-C662-43E3-AE65-BC6FA0E3BEEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F2BEC1-C662-43E3-AE65-BC6FA0E3BEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F2BEC1-C662-43E3-AE65-BC6FA0E3BEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F2BEC1-C662-43E3-AE65-BC6FA0E3BEEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

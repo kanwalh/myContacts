@@ -64,6 +64,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessEntities\Address.cs" />
+    <Compile Include="BusinessEntities\AddressType.cs" />
+    <Compile Include="BusinessEntities\Contact.cs" />
+    <Compile Include="BusinessEntities\ContactType.cs" />
+    <Compile Include="BusinessEntities\Email.cs" />
+    <Compile Include="BusinessEntities\EmailType.cs" />
+    <Compile Include="BusinessEntities\Phone.cs" />
+    <Compile Include="BusinessEntities\PhoneType.cs" />
+    <Compile Include="BusinessEntities\Relation.cs" />
     <Compile Include="Model\IMyDbContext.cs">
       <DependentUpon>myContacts.tt</DependentUpon>
     </Compile>
